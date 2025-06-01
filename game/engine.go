@@ -84,21 +84,20 @@ func (g *GameState) processSpace() {
 	// Space character counting
 	g.TotalChars++
 	g.CorrectChars++ // Space is always correct if we reach this point
-	
+
 	g.nextWord()
 }
 
-
 func (g *GameState) processTypedChar(char rune) {
 	currentWord := g.GetCurrentWord()
-	
+
 	if g.CurrentCharIdx < len(currentWord) {
 		expectedChar := rune(currentWord[g.CurrentCharIdx])
-		
+
 		g.UserInput += string(char)
 		g.CurrentCharIdx++
 		g.TotalChars++
-		
+
 		if char == expectedChar {
 			g.CorrectChars++
 		} else {
@@ -115,7 +114,7 @@ func (g *GameState) nextWord() {
 	g.CurrentWordIdx++
 	g.CurrentCharIdx = 0
 	g.UserInput = ""
-	
+
 	if g.CurrentWordIdx >= len(g.Words) {
 		g.Finish()
 	}
@@ -149,12 +148,12 @@ func (g *GameState) CalculateWPM() float64 {
 	if elapsed == 0 {
 		return 0
 	}
-	
+
 	minutes := elapsed.Minutes()
 	if minutes == 0 {
 		return 0
 	}
-	
+
 	return float64(g.CorrectChars/5) / minutes
 }
 
@@ -162,7 +161,7 @@ func (g *GameState) CalculateAccuracy() float64 {
 	if g.TotalChars == 0 {
 		return 100.0
 	}
-	
+
 	return float64(g.CorrectChars) / float64(g.TotalChars) * 100.0
 }
 
@@ -184,3 +183,4 @@ func (g *GameState) GetProgress() float64 {
 	}
 	return float64(g.CurrentWordIdx) / float64(len(g.Words)) * 100.0
 }
+

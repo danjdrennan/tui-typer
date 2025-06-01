@@ -30,24 +30,24 @@ func NewTUI() *TUI {
 
 func (t *TUI) RunTypingTest(gameState *game.GameState) {
 	t.gameState = gameState
-	
+
 	fmt.Println("\n=== Typing Test ===")
 	fmt.Printf("Type the following text. Test duration: %v\n", gameState.TestDuration)
 	fmt.Println("Press Enter when ready to start...")
-	
+
 	reader := bufio.NewReader(os.Stdin)
 	reader.ReadString('\n')
-	
+
 	t.enableRawMode()
 	defer t.disableRawMode()
-	
+
 	gameState.Start()
 	t.clearScreen()
 	t.displayTestInterface()
-	
+
 	go t.handleTimer()
 	t.handleInput()
-	
+
 	t.disableRawMode()
 	t.clearScreen()
 	fmt.Printf("\nTest completed!\n")
@@ -56,7 +56,7 @@ func (t *TUI) RunTypingTest(gameState *game.GameState) {
 func (t *TUI) handleTimer() {
 	ticker := time.NewTicker(100 * time.Millisecond)
 	defer ticker.Stop()
-	
+
 	for !t.gameState.Finished {
 		select {
 		case <-ticker.C:
@@ -75,14 +75,14 @@ func (t *TUI) handleInput() {
 		if char == 0 {
 			continue
 		}
-		
+
 		if char == 27 {
 			fmt.Print("\033[2K\r")
 			fmt.Print("Test aborted. Press any key to continue...")
 			t.readChar()
 			return
 		}
-		
+
 		if char == 127 || char == 8 {
 			t.handleBackspace()
 		} else if char == 32 {
@@ -90,7 +90,7 @@ func (t *TUI) handleInput() {
 		} else if char >= 32 && char <= 126 {
 			t.handleCharInput(char)
 		}
-		
+
 		t.updateDisplay()
 	}
 }
@@ -126,22 +126,22 @@ func (t *TUI) handleBackspace() {
 func (t *TUI) displayTestInterface() {
 	t.moveCursor(1, 1)
 	fmt.Print("\033[2K")
-	
+
 	timeLeft := t.gameState.TestDuration - t.gameState.GetElapsedTime()
 	if timeLeft < 0 {
 		timeLeft = 0
 	}
-	
+
 	fmt.Printf("Time: %.1fs | Progress: %.1f%% | WPM: %.1f | Accuracy: %.1f%% | Errors: %d",
 		timeLeft.Seconds(),
 		t.gameState.GetProgress(),
 		t.gameState.CalculateWPM(),
 		t.gameState.CalculateAccuracy(),
 		t.gameState.Errors)
-	
+
 	t.moveCursor(3, 1)
 	t.displayTextWithOverlay()
-	
+
 	t.displayLines = 15
 }
 
@@ -153,24 +153,24 @@ func (t *TUI) displayTextWithOverlay() {
 		}
 		allText += word
 	}
-	
+
 	for i := 3; i <= 10; i++ {
 		t.moveCursor(i, 1)
 		fmt.Print("\033[2K")
 	}
-	
+
 	t.moveCursor(3, 1)
 	charPos := 0
 	linePos := 3
 	colPos := 1
-	
+
 	for i, char := range allText {
 		if colPos > 80 {
 			linePos++
 			colPos = 1
 			t.moveCursor(linePos, colPos)
 		}
-		
+
 		if i < len(t.typedText) {
 			typedChar := rune(t.typedText[i])
 			if typedChar == char {
@@ -183,15 +183,15 @@ func (t *TUI) displayTextWithOverlay() {
 		} else {
 			fmt.Printf("\033[90m%c\033[0m", char)
 		}
-		
+
 		charPos++
 		colPos++
-		
+
 		if linePos > 8 {
 			break
 		}
 	}
-	
+
 	if len(t.typedText) > len(allText) {
 		extraText := t.typedText[len(allText):]
 		for _, char := range extraText {
@@ -204,7 +204,7 @@ func (t *TUI) displayTextWithOverlay() {
 			colPos++
 		}
 	}
-	
+
 	t.moveCursor(10, 1)
 	fmt.Printf("Typed: %d chars", len(t.typedText))
 }

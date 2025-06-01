@@ -210,4 +210,3 @@ func (t *TUITest) updateTextOverlay() {
 
 	t.textView.SetText(result.String())
 }
-

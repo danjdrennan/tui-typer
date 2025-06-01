@@ -46,7 +46,6 @@ func setupSignalHandling() {
 	}()
 }
 
-
 func runTypingTest(wordBank *data.WordBank) {
 	for {
 		words := wordBank.GenerateSequence(300)
@@ -65,7 +64,6 @@ func runTypingTest(wordBank *data.WordBank) {
 		// Continue loop for another test
 	}
 }
-
 
 func showTestResults(gameState *game.GameState) {
 	result := gameState.GetTestResult()
