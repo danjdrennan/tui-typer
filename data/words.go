@@ -80,10 +80,9 @@ func (wb *WordBank) GenerateSequence(count int) []string {
 	rand.New(rand.NewSource(time.Now().UnixNano()))
 	sequence := make([]string, count)
 
-	for i := 0; i < count; i++ {
+	for i := range count {
 		sequence[i] = wb.SelectRandomWord()
 	}
 
 	return sequence
 }
-
